@@ -1,6 +1,7 @@
 package co.lemee.chickenfeathermod;
 
 import com.mojang.logging.LogUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.animal.Chicken;
@@ -9,7 +10,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
@@ -21,15 +21,21 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 
+// The value here should match an entry in the META-INF/mods.toml file
 @Mod(ChickenFeatherMod.MODID)
 public class ChickenFeatherMod {
+    // Define mod id in a common place for everything to reference
     public static final String MODID = "chickenfeathermod";
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final String DROPPED_TAG = "chickenfeather:dropped";
 
-    public ChickenFeatherMod() {
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+    public ChickenFeatherMod(FMLJavaModLoadingContext context) {
+        IEventBus modEventBus = context.getModEventBus();
+
+        // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
+
+        // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
     }
 
@@ -43,10 +49,9 @@ public class ChickenFeatherMod {
             Level level = entityInteract.getLevel();
             if (!chicken.getTags().contains(DROPPED_TAG) && chicken.shouldDropExperience()) {
                 chicken.addTag(DROPPED_TAG);
-                chicken.spawnAtLocation(new ItemStack(Items.FEATHER));
                 if (level instanceof ServerLevel serverLevel) {
-                    int reward = ForgeEventFactory.getExperienceDrop(chicken, entityInteract.getEntity(), 1);
-                    ExperienceOrb.award(serverLevel, entityInteract.getPos().getCenter(), reward);
+                    chicken.spawnAtLocation(serverLevel, new ItemStack(Items.FEATHER));
+                    ExperienceOrb.award(serverLevel, entityInteract.getPos().getCenter(), chicken.getExperienceReward(serverLevel, entityInteract.getEntity()));
                 }
             }
         }
@@ -74,6 +79,7 @@ public class ChickenFeatherMod {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
             LOGGER.info("Chicken Feather Mod SETUP");
+            LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
         }
     }
 }
