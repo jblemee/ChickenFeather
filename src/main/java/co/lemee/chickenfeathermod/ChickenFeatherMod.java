@@ -10,6 +10,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
@@ -50,8 +51,9 @@ public class ChickenFeatherMod {
             if (!chicken.getTags().contains(DROPPED_TAG) && chicken.shouldDropExperience()) {
                 chicken.addTag(DROPPED_TAG);
                 if (level instanceof ServerLevel serverLevel) {
-                    chicken.spawnAtLocation(serverLevel, new ItemStack(Items.FEATHER));
-                    ExperienceOrb.award(serverLevel, entityInteract.getPos().getCenter(), chicken.getExperienceReward(serverLevel, entityInteract.getEntity()));
+                    chicken.spawnAtLocation(new ItemStack(Items.FEATHER));
+                    int reward = ForgeEventFactory.getExperienceDrop(chicken, entityInteract.getEntity(), 1);
+                    ExperienceOrb.award(serverLevel, entityInteract.getPos().getCenter(), reward);
                 }
             }
         }
