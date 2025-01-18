@@ -22,17 +22,17 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/mods.toml file
-@Mod(ChickenFeatherMod.MODID)
+@Mod(ChickenFeatherMod.MOD_ID)
 public class ChickenFeatherMod {
     // Define mod id in a common place for everything to reference
-    public static final String MODID = "chickenfeathermod";
+    public static final String MOD_ID = "chickenfeathermod";
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final String DROPPED_TAG = "chickenfeather:dropped";
 
     public ChickenFeatherMod(FMLJavaModLoadingContext context) {
         IEventBus modEventBus = context.getModEventBus();
 
-        // Register the commonSetup method for modloading
+        // Register the commonSetup method for mod loading
         modEventBus.addListener(this::commonSetup);
 
         // Register ourselves for server and other game events we are interested in
@@ -74,7 +74,7 @@ public class ChickenFeatherMod {
     }
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
-    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
