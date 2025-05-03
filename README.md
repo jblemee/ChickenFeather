@@ -14,8 +14,7 @@ ChickenFeather may be downloaded from any of the following sites:
 Contributing information
 =======
 
-This repository can be directly cloned to get you started with the
-mod
+This repository can be directly cloned to get you started with the mod
 
 If at any point you are missing libraries in your IDE, or you've run into problems you can
 run `gradlew --refresh-dependencies` to refresh the local cache. `gradlew clean` to reset everything
